@@ -1,5 +1,5 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "../src/api.ts";
+import { appRouter } from "../src/server/api.ts";
 import html from "../dist/index.html" with { type: "text" };
 
 // Handle requests directly with Deno

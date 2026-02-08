@@ -1,6 +1,6 @@
 /* @refresh reload */
-import "./index.css";
+import "./ui/index.css";
 import { render } from "solid-js/web";
-import App from "./App.tsx";
+import App from "./ui/App.tsx";
 
 render(() => <App />, document.getElementById("root") as HTMLElement);

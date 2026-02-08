@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
-import { transformer } from "./api_transformer.ts";
+import { transformer } from "./transformer.ts";
 
 // Initialize tRPC
 const t = initTRPC.create({

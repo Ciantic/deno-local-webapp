@@ -13,7 +13,9 @@
   "tasks": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "deno run -P --watch-hmr --unstable-raw-imports ./deno/server.ts"
+    "preview": "deno run -P --watch-hmr --unstable-raw-imports ./deno/server.ts",
+    "compile": "deno compile -P --unstable-raw-imports --output ./dist/server ./deno/server.ts ",
+    "check": "deno check --unstable-raw-imports"
   },
   "imports": {
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.18",

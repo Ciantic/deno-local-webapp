@@ -27,7 +27,7 @@ function App() {
           </button>
         </div>
         <div class="flex-1">
-          <a class="btn btn-ghost text-xl">daisyUI header as an example</a>
+          <a class="btn btn-ghost text-xl">daisyUI header as an example!</a>
         </div>
         <div class="flex-none">
           <button class="btn btn-square btn-ghost">

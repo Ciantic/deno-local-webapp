@@ -1,6 +1,6 @@
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
-import { type AppRouter } from "./api.ts";
-import { transformer } from "./api_transformer.ts";
+import { type AppRouter } from "../server/api.ts";
+import { transformer } from "../server/transformer.ts";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
