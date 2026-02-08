@@ -16,9 +16,13 @@
     "preview": "deno run -P --watch-hmr --unstable-raw-imports ./deno/server.ts"
   },
   "imports": {
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.18",
     "@trpc/client": "npm:@trpc/client@^11",
     "@trpc/server": "npm:@trpc/server@^11",
+    "daisyui": "npm:daisyui@^5.5.18",
+    "devalue": "npm:devalue@^5.6.2",
     "solid-js": "npm:solid-js@^1.9.11",
+    "tailwindcss": "npm:tailwindcss@^4.1.18",
     "zod": "npm:zod@4",
 
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.5",

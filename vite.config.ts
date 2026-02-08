@@ -2,16 +2,16 @@ import { defineConfig } from "vite";
 import deno from "@deno/vite-plugin";
 import solid from "vite-plugin-solid";
 import { viteSingleFile } from "vite-plugin-singlefile";
-
 import { PluginOption } from "vite";
+import { appRouter } from "./src/api.ts";
+import tailwindcss from "@tailwindcss/vite";
 import {
-  NodeHTTPHandlerOptions,
-  NodeHTTPRequest,
   nodeHTTPRequestHandler,
-  NodeHTTPResponse,
+  type NodeHTTPHandlerOptions,
+  type NodeHTTPRequest,
+  type NodeHTTPResponse,
 } from "@trpc/server/adapters/node-http";
 import type { AnyRouter } from "@trpc/server";
-import { appRouter } from "./src/api.ts";
 
 type TrpcPluginOptions<
   TRouter extends AnyRouter,
@@ -56,6 +56,7 @@ function trpc<
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     deno(),
     solid(),
     trpc({

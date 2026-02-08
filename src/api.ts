@@ -1,9 +1,12 @@
 import { initTRPC } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
+import { transformer } from "./api_transformer.ts";
 
 // Initialize tRPC
-const t = initTRPC.create();
+const t = initTRPC.create({
+  transformer,
+});
 
 // Create main router
 export const appRouter = t.router({
@@ -14,7 +17,7 @@ export const appRouter = t.router({
         name: z.string(),
       }),
     )
-    .query(({ input }) => `Hello, ${input.name}!`),
+    .query(({ input }) => `Hello, ${input.name}!!!!`),
 
   // WebSocket subscription - sends numbers
   counter: t.procedure
