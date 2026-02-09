@@ -1,46 +1,117 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../src/server/api.ts";
-import html from "../dist/index.html" with { type: "text" };
+import { UntarStream } from "jsr:@std/tar/untar-stream";
+import { Buffer } from "jsr:@std/streams/buffer";
+
+// If this gives, error, you should first run `deno task build` to create the tarball
+import data from "../dist/dist.tar" with { type: "bytes" };
+
+async function serveFileFromTarball(path: string): Promise<Response> {
+  const buffer = new Buffer(data);
+  const tarStream = buffer.readable.pipeThrough(new UntarStream());
+  let relative = "." + path; // Ensure path is relative to tar root
+  if (path === "/") {
+    relative = "./index.html"; // Default to index.html for root path
+  }
+
+  // Search for the requested file in the tar archive
+  for await (const entry of tarStream) {
+    if (entry.path === relative && entry.readable) {
+      return new Response(entry.readable);
+    }
+    // Drain the stream if it's not the file we're looking for
+    if (entry.readable) {
+      await entry.readable.cancel();
+    }
+  }
+
+  return new Response("File not found", { status: 404 });
+}
+
+const PORT = 3010;
+const HOST = "localhost";
+
+console.log(`Starting server at http://${HOST}:${PORT}/`);
+
+// Start Chrome in app mode
+new Deno.Command("google-chrome-stable", {
+  args: ["--new-window", `--app=http://${HOST}:${PORT}/`],
+  stdout: "inherit",
+  stderr: "inherit",
+}).spawn();
+
+// Auto-shutdown the server if no requests are received for a certain period of time
+const INACTIVITY_TIMEOUT = 15000; // 15 seconds
+let LAST_REQUEST = Date.now();
+const checkInterval = setInterval(() => {
+  try {
+    const timeSinceLastRequest = Date.now() - LAST_REQUEST;
+
+    if (timeSinceLastRequest >= INACTIVITY_TIMEOUT) {
+      console.log(
+        `[Auto-shutdown] No requests for ${timeSinceLastRequest}ms - shutting down...`,
+      );
+      clearInterval(checkInterval);
+      Deno.exit(0);
+    }
+  } catch (e) {
+    console.error("Error checking keep-alive:", e);
+  }
+}, 5000);
 
 // Handle requests directly with Deno
-Deno.serve((req) => {
-  // TODO: Handle WebSocket upgrades
-  /*
-  if (req.headers.get('upgrade') === 'websocket') {
-    const { socket, response } = Deno.upgradeWebSocket(req);
-    
-    socket.onopen = (e) => {
-    };
-    
-    socket.onmessage = async (e) => {
-     
-    };
-    
-    socket.onclose = (e) => {
-    };
-    
-    socket.onerror = (e) => {
-    };
-    
-    return response;
-  }
-  */
+Deno.serve(
+  {
+    hostname: HOST,
+    port: PORT,
+  },
+  (req) => {
+    LAST_REQUEST = Date.now();
+    // console.log(req.url);
 
-  console.log(req.url);
+    // Parse the url to path
+    const url = new URL(req.url);
 
-  // Parse the url to path
-  const url = new URL(req.url);
+    if (url.pathname.startsWith("/trpc")) {
+      // Other from TRPC endpoint
+      return fetchRequestHandler({
+        endpoint: "/trpc",
+        req,
+        router: appRouter,
+        createContext: () => ({}),
+      });
+    }
+    // Server index.html from root
+    // if (url.pathname === "/") {
+    //   return new Response(html, { headers: { "content-type": "text/html" } });
+    // }
 
-  // Server index.html from root
-  if (url.pathname === "/") {
-    return new Response(html, { headers: { "content-type": "text/html" } });
-  }
+    return serveFileFromTarball(url.pathname);
 
-  // Other from TRPC endpoint
-  return fetchRequestHandler({
-    endpoint: "/trpc",
-    req,
-    router: appRouter,
-    createContext: () => ({}),
-  });
-});
+    // return serveDir(req, {
+    //   fsRoot: "./dist/",
+    //   urlRoot: "",
+    // });
+  },
+);
+
+// TODO: Handle WebSocket upgrades
+/*
+if (req.headers.get('upgrade') === 'websocket') {
+const { socket, response } = Deno.upgradeWebSocket(req);
+
+socket.onopen = (e) => {
+};
+
+socket.onmessage = async (e) => {
+  
+};
+
+socket.onclose = (e) => {
+};
+
+socket.onerror = (e) => {
+};
+
+return response;
+*/

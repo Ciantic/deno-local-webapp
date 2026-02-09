@@ -53,6 +53,28 @@ function trpc<
   };
 }
 
+function postTarBallPlugin(): PluginOption {
+  return {
+    name: "post-tarball",
+    apply: "build",
+    closeBundle() {
+      const command = new Deno.Command("tar", {
+        args: ["-cf", "dist/dist.tar", "--remove-files", "-C", "dist", "."],
+      });
+
+      const result = command.outputSync();
+
+      if (result.success) {
+        console.log(`✓ Created tarball: dist/dist.tar.gz`);
+      } else {
+        console.error(
+          `✗ Failed to create tarball: ${new TextDecoder().decode(result.stderr)}`,
+        );
+      }
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -65,5 +87,6 @@ export default defineConfig({
       createContext: () => ({}),
     }),
     viteSingleFile(),
+    postTarBallPlugin(),
   ],
 });
