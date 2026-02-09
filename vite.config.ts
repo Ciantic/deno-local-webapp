@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import deno from "@deno/vite-plugin";
 import solid from "vite-plugin-solid";
-import { viteSingleFile } from "vite-plugin-singlefile";
 import { PluginOption } from "vite";
 import { appRouter } from "./src/server/api.ts";
 import tailwindcss from "@tailwindcss/vite";
@@ -86,7 +85,6 @@ export default defineConfig({
       router: appRouter,
       createContext: () => ({}),
     }),
-    viteSingleFile(),
     postTarBallPlugin(),
   ],
 });

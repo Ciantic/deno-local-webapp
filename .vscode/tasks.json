@@ -20,6 +20,18 @@
       "type": "process",
       "command": "deno",
       "args": ["task", "preview"]
+    },
+    {
+      "label": "check",
+      "type": "process",
+      "command": "deno",
+      "args": ["task", "check"]
+    },
+    {
+      "label": "compile",
+      "type": "process",
+      "command": "deno",
+      "args": ["task", "compile"]
     }
   ]
 }

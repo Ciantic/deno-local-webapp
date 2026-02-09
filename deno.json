@@ -34,11 +34,11 @@
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.5",
     "vite": "npm:vite@^7.3.1",
     "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.10",
-    "vite-plugin-singlefile": "npm:vite-plugin-singlefile@^2.3.0",
 
     "@std/assert": "jsr:@std/assert@1",
     "@std/tar": "jsr:@std/tar@0.1",
-    "@std/streams": "jsr:@std/streams@^1.0.17"
+    "@std/streams": "jsr:@std/streams@^1.0.17",
+    "@std/media-types": "jsr:@std/media-types@1"
   },
   "nodeModulesDir": "auto"
 }
