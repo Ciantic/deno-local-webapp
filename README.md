@@ -10,3 +10,5 @@ deno task build # produces my-app.mjs
 deno task preview # Run deno with my-app.js
 deno task compile # Create single-file executable from it
 ```
+
+You should now have `./dist/my-app` that can be executed.
