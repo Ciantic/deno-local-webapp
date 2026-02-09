@@ -1,4 +1,5 @@
 dist
+dist.deno
 .vite
 .env
 .env*.local

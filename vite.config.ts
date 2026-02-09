@@ -57,8 +57,11 @@ function postTarBallPlugin(): PluginOption {
     name: "post-tarball",
     apply: "build",
     closeBundle() {
+      // mk dist.deno
+      Deno.mkdirSync("dist.deno", { recursive: true });
+
       const command = new Deno.Command("tar", {
-        args: ["-cf", "dist/dist.tar", "--remove-files", "-C", "dist", "."],
+        args: ["-cf", "dist.deno/dist.tar", "-C", "dist", "."],
       });
 
       const result = command.outputSync();

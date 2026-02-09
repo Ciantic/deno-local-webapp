@@ -16,9 +16,9 @@
   },
   "tasks": {
     "dev": "vite",
-    "build": "vite build && deno bundle --unstable-raw-imports --output ./dist/my-app.mjs ./deno/server.ts",
-    "preview": "deno run -P --watch-hmr --unstable-raw-imports ./dist/my-app.mjs",
-    "compile": "deno compile -P --output ./dist/my-app ./dist/my-app.mjs",
+    "build": "vite build && deno bundle --unstable-raw-imports --output ./dist.deno/my-app.mjs ./deno/server.ts",
+    "preview": "deno run -P --watch-hmr --unstable-raw-imports ./dist.deno/my-app.mjs",
+    "compile": "deno compile -P --output ./dist.deno/my-app ./dist.deno/my-app.mjs",
     "check": "deno check --unstable-raw-imports"
   },
   "imports": {

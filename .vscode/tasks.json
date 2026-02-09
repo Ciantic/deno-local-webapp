@@ -13,7 +13,8 @@
       "label": "build",
       "type": "process",
       "command": "deno",
-      "args": ["task", "build"]
+      "args": ["task", "build"],
+      "problemMatcher": []
     },
     {
       "label": "preview",
@@ -31,7 +32,8 @@
       "label": "compile",
       "type": "process",
       "command": "deno",
-      "args": ["task", "compile"]
+      "args": ["task", "compile"],
+      "problemMatcher": []
     }
   ]
 }

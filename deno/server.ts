@@ -5,7 +5,7 @@ import { Buffer } from "@std/streams/buffer";
 import { contentType } from "@std/media-types";
 
 // If this gives, error, you should first run `deno task build` to create the tarball
-import DATA from "../dist/dist.tar" with { type: "bytes" };
+import DATA from "../dist.deno/dist.tar" with { type: "bytes" };
 const PORT = 3010;
 const HOST = "localhost";
 
