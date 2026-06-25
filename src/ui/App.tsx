@@ -37,10 +37,6 @@ function App() {
     yield api.addTodo.mutate(newTodo); // server write
 
     refresh(todos);
-    //      ^ property '[$REFRESH]' is missing in type 'readonly { id: number; title: string; completed: boolean; }[]' but required in type '{ [$REFRESH]: any;
-
-    // It however works if I do this:
-    // refresh(todos as any);
   });
 
   return (
