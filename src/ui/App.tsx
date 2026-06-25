@@ -1,15 +1,53 @@
 import "./App.css";
-import { createSignal } from "solid-js";
+import {
+  action,
+  createOptimisticStore,
+  createSignal,
+  For,
+  Loading,
+  refresh,
+} from "solid-js";
+import type { inferProcedureInput } from "@trpc/server";
 import { api } from "./client.ts";
+import { AppRouter } from "../server/api.ts";
+import { asyncThrottleSingleInFlight } from "../utils/async.ts";
+
+const getTodosDebounced = asyncThrottleSingleInFlight(api.getTodos.query, 300);
 
 function App() {
   const [count, setCount] = createSignal(0);
+  const [filteredByTitle, setFilteredByTitle] = createSignal("");
+  const [todos, setOptimisticTodos] = createOptimisticStore(
+    () =>
+      getTodosDebounced({
+        filterByTitle: filteredByTitle(),
+      }),
+    [],
+  );
+
+  const addTodo = action(function* (todo: { title: string }) {
+    const newTodo = {
+      title: todo.title,
+      id: Math.floor(Math.random() * 10000), // temporary ID for optimistic UI
+      completed: false,
+    } satisfies inferProcedureInput<AppRouter["addTodo"]>;
+    setOptimisticTodos((todos) => {
+      todos.push(newTodo);
+    }); // optimistic UI
+    yield api.addTodo.mutate(newTodo); // server write
+
+    refresh(todos);
+    //      ^ property '[$REFRESH]' is missing in type 'readonly { id: number; title: string; completed: boolean; }[]' but required in type '{ [$REFRESH]: any;
+
+    // It however works if I do this:
+    // refresh(todos as any);
+  });
 
   return (
-    <div class="App">
+    <Loading fallback={<div>Loading...</div>}>
       <div class="navbar bg-base-100 shadow-sm">
         <div class="flex-none">
-          <button class="btn btn-square btn-ghost">
+          <button class="btn btn-square btn-ghost" type="button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -30,7 +68,7 @@ function App() {
           <a class="btn btn-ghost text-xl">daisyUI header as an example!</a>
         </div>
         <div class="flex-none">
-          <button class="btn btn-square btn-ghost">
+          <button class="btn btn-square btn-ghost" type="button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -68,7 +106,44 @@ function App() {
       >
         count is {count()}
       </button>
-    </div>
+
+      <div class="divider">OR</div>
+
+      <h2 class="text-2xl font-bold">Todo List</h2>
+      <input
+        type="text"
+        placeholder="Filter by title..."
+        class="input input-bordered w-full max-w-xs mb-4"
+        value={filteredByTitle()}
+        onInput={(e) => setFilteredByTitle(e.currentTarget.value)}
+      />
+      <ul>
+        <For each={todos}>
+          {(todo) => (
+            <li>
+              {todo.title} {todo.completed ? "✔️" : "❌"}
+            </li>
+          )}
+        </For>
+      </ul>
+      <input
+        type="text"
+        id="new-todo"
+        class="input input-bordered w-full max-w-xs"
+      />
+      <button
+        class="btn"
+        type="button"
+        onClick={() => {
+          const input = document.getElementById("new-todo") as HTMLInputElement;
+          if (input.value.trim() === "") return;
+          addTodo({ title: input.value });
+          input.value = "";
+        }}
+      >
+        Add Todo
+      </button>
+    </Loading>
   );
 }
 
